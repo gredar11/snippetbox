@@ -48,7 +48,19 @@ func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Write([]byte("Создание новой заметки..."))
+	title := "История про улитку"
+	content := "Улитка выползла из раковины,\nвытянула рожки,\nи опять подобрала их."
+	expires := "7"
+
+	// Передаем данные в метод SnippetModel.Insert(), получая обратно
+	// ID только что созданной записи в базу данных.
+	id, err := app.snippetModel.Insert(title, content, expires)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	http.Redirect(w, r, fmt.Sprintf("/snippet?id=%d", id), http.StatusSeeOther)
 }
 
 func (app *application) handleError(w http.ResponseWriter, err error) {
