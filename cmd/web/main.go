@@ -8,6 +8,7 @@ import (
 	"os"
 
 	_ "github.com/go-sql-driver/mysql"
+	"golangify.com/snippetbox/pkg/models/mysql"
 )
 
 func main() {
@@ -27,9 +28,14 @@ func main() {
 
 	defer db.Close()
 
+	snippetModel := &mysql.SnippetModel{
+		DB: db,
+	}
+
 	app := &application{
-		errorLog: errorLog,
-		infoLog:  infoLog,
+		errorLog:     errorLog,
+		infoLog:      infoLog,
+		snippetModel: snippetModel,
 	}
 
 	server := &http.Server{
@@ -55,6 +61,7 @@ func openDB(dsn string) (*sql.DB, error) {
 }
 
 type application struct {
-	errorLog *log.Logger
-	infoLog  *log.Logger
+	errorLog     *log.Logger
+	infoLog      *log.Logger
+	snippetModel *mysql.SnippetModel
 }
