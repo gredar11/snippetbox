@@ -4,6 +4,7 @@ import (
 	"flag"
 	"log"
 	"net/http"
+	"os"
 )
 
 func main() {
@@ -12,15 +13,32 @@ func main() {
 
 	flag.Parse()
 
+	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
+
+	errorLog := log.New(os.Stderr, "ERR\t", log.Ldate|log.Ltime|log.Lshortfile)
+
+	app := &application{
+		errorLog: errorLog,
+		infoLog:  infoLog,
+	}
+
 	mux := http.NewServeMux()
-	mux.HandleFunc("/", home)
+	mux.HandleFunc("/", app.home)
+	mux.HandleFunc("/snippet", app.showSnippet)
+	mux.HandleFunc("/snippet/create", app.createSnippet)
 
-	mux.HandleFunc("/snippet", showSnippet)
+	server := &http.Server{
+		Addr:     *addr,
+		ErrorLog: errorLog,
+		Handler:  mux,
+	}
 
-	mux.HandleFunc("/snippet/create", createSnippet)
+	infoLog.Printf("Запус веб-сервера на %s", *addr)
+	err := server.ListenAndServe()
+	errorLog.Fatal(err)
+}
 
-	log.Printf("Запус веб-сервера на %s", *addr)
-
-	err := http.ListenAndServe(*addr, mux)
-	log.Fatal(err)
+type application struct {
+	errorLog *log.Logger
+	infoLog  *log.Logger
 }
