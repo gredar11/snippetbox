@@ -19,10 +19,7 @@ func main() {
 
 	mux.HandleFunc("/snippet/create", createSnippet)
 
-	fileServer := http.FileServer(http.Dir("../../ui/static/"))
-	mux.Handle("/static/", http.StripPrefix("/static", fileServer))
-
-	log.Println("Запус веб-сервера на %d", *addr)
+	log.Printf("Запус веб-сервера на %s", *addr)
 
 	err := http.ListenAndServe(*addr, mux)
 	log.Fatal(err)
