@@ -19,9 +19,9 @@ func main() {
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stderr, "ERR\t", log.Ldate|log.Ltime|log.Lshortfile)
 
-	dsn := flag.String("dsn", "web:pass@/snippetbox?parseTime=true", "Название MySQL источника данных")
+	connString := flag.String("dsn", "web:pass@/snippetbox?parseTime=true", "Название MySQL источника данных")
 
-	db, err := openDB(*dsn)
+	db, err := openDB(*connString)
 	if err != nil {
 		errorLog.Fatal(err)
 	}
@@ -49,8 +49,8 @@ func main() {
 	errorLog.Fatal(err)
 }
 
-func openDB(dsn string) (*sql.DB, error) {
-	db, err := sql.Open("mysql", dsn)
+func openDB(connString string) (*sql.DB, error) {
+	db, err := sql.Open("mysql", connString)
 	if err != nil {
 		return nil, err
 	}
