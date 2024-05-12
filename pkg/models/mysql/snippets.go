@@ -75,6 +75,6 @@ func (m *SnippetModel) Latest() ([]*models.Snippet, error) {
 	if err = rows.Err(); err != nil {
 		return nil, err
 	}
- 
+
 	return snippets, nil
 }
